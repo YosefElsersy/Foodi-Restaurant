@@ -12,7 +12,7 @@ const Order = () => {
     queryKey: ["orders", user?.email],
     queryFn: async () => {
       const res = await fetch(
-        `http://localhost:6001/payments/user-orders/?email=${user?.email}`,
+        `https://foodi-restaurant-server.onrender.com/payments/user-orders/?email=${user?.email}`,
         {
           headers: {
             authorization: `Bearer ${token}`,

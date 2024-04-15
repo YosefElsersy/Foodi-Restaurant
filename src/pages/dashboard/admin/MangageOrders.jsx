@@ -11,7 +11,7 @@ const ManageOrders = () => {
     const fetchOrders = async () => {
       try {
         const res = await fetch(
-          `http://localhost:6001/payments?email=${user?.email}`,
+          `https://foodi-restaurant-server.onrender.com/payments?email=${user?.email}`,
           {
             headers: {
               authorization: `Bearer ${token}`,
@@ -33,7 +33,7 @@ const ManageOrders = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:6001/payments/${orderId}`, {
+      const res = await fetch(`https://foodi-restaurant-server.onrender.com/payments/${orderId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +65,7 @@ const ManageOrders = () => {
 
   const handleDeleteOrder = async (orderId) => {
     try {
-      const res = await fetch(`http://localhost:6001/payments/${orderId}`, {
+      const res = await fetch(`https://foodi-restaurant-server.onrender.com/payments/${orderId}`, {
         method: "DELETE",
         headers: {
           authorization: `Bearer ${token}`,
