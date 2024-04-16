@@ -11,9 +11,11 @@ import Swal from "sweetalert2";
 const Signup = () => {
   const { signUpWithGmail, createUser, updateUserProfile } =
     useContext(AuthContext);
-  const axiosPublic = useAxiosPublic();
+    const axiosPublic = useAxiosPublic();
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const from = location.state?.from?.pathname || "/";
 
   const {
@@ -25,33 +27,36 @@ const Signup = () => {
   const onSubmit = (data) => {
     const email = data.email;
     const password = data.password;
+    // console.log(email, password)
     createUser(email, password)
       .then((result) => {
         // Signed up
         const user = result.user;
-        updateUserProfile(data.name, data.photoURL).then(() => {
+        updateUserProfile(data.email, data.photoURL).then(() => {
           const userInfor = {
             name: data.name,
             email: data.email,
           };
-          axiosPublic.post("/users", userInfor).then((response) => {
-            Swal.fire({
-              title: "Success!",
-              text: "Your account has been created successfully.",
-              icon: "success",
-            }).then(() => {
+          axiosPublic.post("/users", userInfor)
+            .then((response) => {
+              // console.log(response);
+              Swal.fire({
+                title: "Success!",
+                text: "Your account has been created successfully.",
+                icon: "success",
+              })
               navigate(from, { replace: true });
             });
-          });
         });
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // Handle error
+        // ..
       });
   };
 
+  // login with google
   const handleRegister = () => {
     signUpWithGmail()
       .then((result) => {
@@ -60,19 +65,20 @@ const Signup = () => {
           name: result?.user?.displayName,
           email: result?.user?.email,
         };
-        axiosPublic.post("/users", userInfor).then((response) => {
-          Swal.fire({
-            title: "Success!",
-            text: "Your account has been created successfully.",
-            icon: "success",
-          }).then(() => {
+        axiosPublic
+          .post("/users", userInfor)
+          .then((response) => {
+            // console.log(response);
+            Swal.fire({
+              title: "Success!",
+              text: "Your account has been created successfully.",
+              icon: "success",
+            })
             navigate("/");
           });
-        });
       })
       .catch((error) => console.log(error));
   };
-
   return (
     <div className="max-w-md bg-white shadow w-full mx-auto flex items-center justify-center my-20">
       <div className="mb-5">
@@ -115,11 +121,11 @@ const Signup = () => {
               className="input input-bordered"
               {...register("password")}
             />
-            {/* <label className="label">
+            <label className="label">
               <a href="#" className="label-text-alt link link-hover mt-2">
                 Forgot password?
               </a>
-            </label> */}
+            </label>
           </div>
 
           {/* error message */}
@@ -145,7 +151,7 @@ const Signup = () => {
         <button
             onClick={handleRegister}
             className="btn btn-circle hover:bg-green hover:text-white"
-            style={{ width: "82%" }} // Specify the width here
+            style={{ width: "82%" }}
           >
             <FaGoogle />
           </button>
