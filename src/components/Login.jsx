@@ -1,140 +1,173 @@
-// Import necessary dependencies
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaFacebookF, FaGithub, FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
+import { AuthContext } from "../contexts/AuthProvider";
 import axios from "axios";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import useAuth from "../hooks/useAuth";
+import Swal from "sweetalert2";
 
 const Login = () => {
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, seterrorMessage] = useState("");
   const { signUpWithGmail, login } = useAuth();
   const axiosPublic = useAxiosPublic();
+
   const navigate = useNavigate();
   const location = useLocation();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  const from = location.state?.from?.pathname || "/";
+
+  //react hook form
+  const {
+    register,
+    handleSubmit, reset,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = (data) => {
     const email = data.email;
     const password = data.password;
-
     login(email, password)
       .then((result) => {
-        // Signed in successfully
+        // Signed in
         const user = result.user;
         const userInfor = {
           name: data.name,
           email: data.email,
         };
-        axiosPublic.post("/users", userInfor)
+        axiosPublic
+          .post("/users", userInfor)
           .then((response) => {
-            alert("Signin successful!");
-            navigate(location.state?.from?.pathname || "/");
+            // console.log(response);
+            Swal.fire({
+              title: "Success!",
+              text: "Your account has been login successfully.",
+              icon: "success",
+            })
+            navigate(from, { replace: true });
           });
+        // console.log(user);
+        // ...
       })
       .catch((error) => {
-        // Handle login error
-        setErrorMessage("Please provide valid email and password!");
+        const errorMessage = error.message;
+        seterrorMessage("Please provide valid email & password!");
       });
+      reset()
+
   };
 
-  // Login with Google
+  // login with google
+  // login with google
   const handleRegister = () => {
     signUpWithGmail()
       .then((result) => {
-        // Handle successful Google login
         const user = result.user;
         const userInfor = {
           name: result?.user?.displayName,
           email: result?.user?.email,
         };
-        axiosPublic.post("/users", userInfor)
+        axiosPublic
+          .post("/users", userInfor)
           .then((response) => {
-            alert("Signin successful!");
+            // console.log(response);
+            Swal.fire({
+              title: "Success!",
+              text: "Your account has been signIn successfully.",
+              icon: "success",
+            })
             navigate("/");
           });
       })
       .catch((error) => console.log(error));
   };
-
   return (
-    <div className="max-w-md bg-white shadow w-full mx-auto flex items-center justify-center my-20">
-      <div className="mb-5">
-        <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-          <h3 className="font-bold text-lg">Please Login!</h3>
+    <div id="my_modal_5" className="max-w-md bg-white shadow w-full mx-auto flex items-center justify-center my-20">
+    <div className="mb-5">
+    <form
+            className="card-body"
+            method="dialog"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <h3 className="font-bold text-lg">Please Login!</h3>
 
-          {/* Email */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Email</span>
-            </label>
-            <input
-              type="email"
-              placeholder="Email"
-              className="input input-bordered"
-              {...register("email", { required: true })}
-            />
-          </div>
-
-          {/* Password */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Password</span>
-            </label>
-            <input
-              type="password"
-              placeholder="Password"
-              className="input input-bordered"
-              {...register("password", { required: true })}
-            />
-            {/* <label className="label">
-              <a href="#" className="label-text-alt link link-hover mt-2">
-                Forgot password?
-              </a>
-            </label> */}
-          </div>
-
-          {/* Show errors */}
-          {errorMessage && (
-            <p className="text-red text-xs italic">{errorMessage}</p>
-          )}
-
-          {/* Submit button */}
-          <div className="form-control mt-4">
-            <input
-              type="submit"
-              className="btn bg-green text-white"
-              value="Login"
-            />
-          </div>
-
-          {/* Close button */}
-          <Link to="/">
-            <div className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
+            {/* email */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="email"
+                placeholder="email"
+                className="input input-bordered"
+                {...register("email")}
+              />
             </div>
-          </Link>
 
-          <p className="text-center my-2">
-            Don`t have an account?
-            <Link to="/signup" className="underline text-red ml-1">
-              Signup Now
-            </Link>
-          </p>
-        </form>
-        <div className="text-center space-x-3">
-        <button
+            {/* password */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="password"
+                placeholder="password"
+                className="input input-bordered"
+                {...register("password", { required: true })}
+              />
+              <label className="label">
+                <a href="#" className="label-text-alt link link-hover mt-2">
+                  Forgot password?
+                </a>
+              </label>
+            </div>
+
+            {/* show errors */}
+            {errorMessage ? (
+              <p className="text-red text-xs italic">
+                Provide a correct username & password.
+              </p>
+            ) : (
+              ""
+            )}
+
+            {/* submit btn */}
+            <div className="form-control mt-4">
+              <input
+                type="submit"
+                className="btn bg-green text-white"
+                value="Login"
+              />
+            </div>
+
+            {/* close btn */}
+            <Link to="/">
+            <div
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            >
+              ✕
+            </div></Link>
+
+            <p className="text-center my-2">
+              Donot have an account?
+              <Link to="/signup" className="underline text-red ml-1">
+                Signup Now
+              </Link>
+            </p>
+          </form>
+    <div className="text-center space-x-3">
+    <button
             onClick={handleRegister}
             className="btn btn-circle hover:bg-green hover:text-white"
-            style={{ width: "82%" }} // Specify the width here
+            style={{ width: "82%" }}
           >
             <FaGoogle />
           </button>
-        </div>
       </div>
     </div>
-  );
-};
+  </div>
+  )
+}
 
-export default Login;
+export default Login
