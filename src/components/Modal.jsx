@@ -4,6 +4,7 @@ import { FaFacebookF, FaGithub, FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../contexts/AuthProvider";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Modal = () => {
   const [errorMessage, seterrorMessage] = useState("");
@@ -33,18 +34,25 @@ const Modal = () => {
           email: data.email,
         };
         axios
-          .post("https://foodi-restaurant-server.onrender.com/users", userInfor)
+          .post("http://localhost:6001/users", userInfor)
           .then((response) => {
-            alert("Signin successful!");
+            // console.log(response);
+              Swal.fire({
+              title: "Success!",
+              text: "Your account has been login successfully.",
+              icon: "success",
+            })
             navigate(from, { replace: true });
-            document.getElementById("my_modal_5").close(); // Close the modal
           });
+        // console.log(user);
+        // ...
       })
       .catch((error) => {
         const errorMessage = error.message;
         seterrorMessage("Please provide valid email & password!");
       });
-    reset()
+      reset()
+
   };
 
   // login with google
@@ -57,16 +65,26 @@ const Modal = () => {
           email: result?.user?.email,
         };
         axios
-          .post("https://foodi-restaurant-server.onrender.com/users", userInfor)
+          .post("http://localhost:6001/users", userInfor)
           .then((response) => {
             // console.log(response);
-            alert("Signin successful!");
+            Swal.fire({
+              title: "Success!",
+              text: "Your account has been signIn successfully.",
+              icon: "success",
+            })
             navigate("/");
           });
       })
       .catch((error) => console.log(error));
   };
 
+    // // Close modal function
+    // const closeModal = () => {
+    //   const modal = document.getElementById("my_modal_5");
+    //   modal.close();
+    // };
+    
   return (
     <dialog id="my_modal_5" className="modal modal-middle sm:modal-middle">
       <div className="modal-box">
@@ -102,11 +120,11 @@ const Modal = () => {
                 className="input input-bordered"
                 {...register("password", { required: true })}
               />
-              {/* <label className="label">
+              <label className="label">
                 <a href="#" className="label-text-alt link link-hover mt-2">
                   Forgot password?
                 </a>
-              </label> */}
+              </label>
             </div>
 
             {/* show errors */}
@@ -137,7 +155,7 @@ const Modal = () => {
             </div>
 
             <p className="text-center my-2">
-              Don`t have an account?
+              Donot have an account?
               <Link to="/signup" className="underline text-red ml-1">
                 Signup Now
               </Link>
@@ -147,7 +165,7 @@ const Modal = () => {
           <button
             onClick={handleRegister}
             className="btn btn-circle hover:bg-green hover:text-white"
-            style={{ width: "88%" }} // Specify the width here
+            style={{ width: "82%" }}
           >
             <FaGoogle />
           </button>
