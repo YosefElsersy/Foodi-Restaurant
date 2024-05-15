@@ -2,7 +2,7 @@
 
 # Foodi Restaurant Client
 
-Welcome to the Foodi Restaurant Client repository! This is the client-side application for Bistro Restaurant, built with React and other technologies.
+Welcome to the Foodi Restaurant Client repository! This is the client-side application for Foodi Restaurant, built with React and other technologies.
 
 ![Foodi Restaurant Preview](https://github.com/YosefElsersy/Foodi-Restaurant-Client/assets/124294506/e0a1228a-0abb-4a80-b249-023716c12690)
 
